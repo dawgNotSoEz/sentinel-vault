@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { api } from "../lib/api";
 
 interface User {
   id: string;
   email: string;
   full_name: string;
+  is_active?: boolean;
 }
 
 interface AuthContextType {
