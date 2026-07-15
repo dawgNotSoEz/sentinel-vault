@@ -27,12 +27,8 @@ class LoginRequest(BaseModel):
         return value.strip().lower()
 
 
-class RefreshRequest(BaseModel):
-    refresh_token: str = Field(min_length=32)
-
-
-class LogoutRequest(BaseModel):
-    refresh_token: str = Field(min_length=32)
+# We no longer need RefreshRequest or LogoutRequest payloads
+# since these operations rely on HttpOnly cookies.
 
 
 class UserResponse(BaseModel):

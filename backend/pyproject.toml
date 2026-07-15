@@ -9,11 +9,13 @@ dependencies = [
   "sqlalchemy",
   "alembic",
   "psycopg[binary]",
-  "pydantic-settings",
-  "argon2-cffi",
-  "pyjwt",
-  "cryptography",
-  "slowapi",
+  "passlib[argon2]>=1.7.4",
+  "python-jose[cryptography]>=3.3.0",
+  "pydantic[email]>=2.9.2",
+  "pydantic-settings>=2.6.1",
+  "cryptography>=43.0.3",
+  "slowapi>=0.1.9",
+  "zxcvbn>=4.4.28"
 ]
 
 [project.optional-dependencies]

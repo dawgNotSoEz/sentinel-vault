@@ -10,6 +10,8 @@ from app.schemas.auth import RegisterRequest, TokenPairResponse
 from app.security.hashing import hash_refresh_token
 from app.security.passwords import hash_password, verify_password
 from app.security.tokens import create_access_token, generate_refresh_token, refresh_token_expires_at
+import zxcvbn
+from datetime import timedelta
 
 
 class AuthError(ValueError):
@@ -23,6 +25,12 @@ def get_user_by_email(db: Session, email: str) -> User | None:
 def register_user(db: Session, payload: RegisterRequest) -> User:
     if get_user_by_email(db, payload.email) is not None:
         raise AuthError("email already registered")
+
+    # Enforce strict password entropy
+    result = zxcvbn.zxcvbn(payload.password)
+    if result["score"] < 3:
+        raise AuthError("password too weak. Use a passphrase or standard password manager.")
+
 
     user = User(
         email=payload.email,
@@ -38,8 +46,25 @@ def register_user(db: Session, payload: RegisterRequest) -> User:
 
 def authenticate_user(db: Session, email: str, password: str) -> User:
     user = get_user_by_email(db, email)
-    if user is None or not user.is_active or not verify_password(password, user.password_hash):
+    if user is None or not user.is_active:
         raise AuthError("invalid email or password")
+        
+    now = datetime.now(UTC)
+    if user.locked_until and user.locked_until > now:
+        raise AuthError("account locked due to too many failed attempts")
+
+    if not verify_password(password, user.password_hash):
+        user.failed_login_attempts += 1
+        if user.failed_login_attempts >= 5:
+            user.locked_until = now + timedelta(minutes=15)
+        db.add(user)
+        db.commit()
+        raise AuthError("invalid email or password")
+
+    user.failed_login_attempts = 0
+    user.locked_until = None
+    db.add(user)
+    db.commit()
     return user
 
 

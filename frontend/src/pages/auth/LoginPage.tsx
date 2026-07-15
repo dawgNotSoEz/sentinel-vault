@@ -23,7 +23,7 @@ export function LoginPage() {
     
     try {
       const res = await api.post("/auth/login", { email, password });
-      login(res.data.access_token, res.data.refresh_token);
+      login(res.data);
       navigate("/");
     } catch (err: any) {
       setError(err.response?.data?.detail || "Invalid credentials");

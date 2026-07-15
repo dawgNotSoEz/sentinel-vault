@@ -53,10 +53,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     app.add_middleware(SecurityHeadersMiddleware)
     
-    # Configure CORS - Restrict origins in production
+    # Configure CORS - Stricter origins for Zero-Trust
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"] if resolved_settings.app_env != "production" else [resolved_settings.frontend_url],
+        allow_origins=[resolved_settings.frontend_url],
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],

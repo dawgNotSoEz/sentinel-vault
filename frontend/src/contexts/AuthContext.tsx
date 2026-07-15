@@ -11,7 +11,7 @@ interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (token: string, refreshToken: string) => void;
+  login: (userData: User) => void;
   logout: () => void;
 }
 
@@ -23,16 +23,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const initAuth = async () => {
-      const token = localStorage.getItem("accessToken");
-      if (token) {
-        try {
-          const res = await api.get("/auth/me");
-          setUser(res.data);
-        } catch (error) {
-          console.error("Auth check failed", error);
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-        }
+      try {
+        const res = await api.get("/auth/me");
+        setUser(res.data);
+      } catch (error) {
+        setUser(null);
       }
       setIsLoading(false);
     };
@@ -40,17 +35,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     initAuth();
   }, []);
 
-  const login = (token: string, refreshToken: string) => {
-    localStorage.setItem("accessToken", token);
-    localStorage.setItem("refreshToken", refreshToken);
-    // Fetch user details immediately after saving tokens
-    api.get("/auth/me").then((res) => setUser(res.data)).catch(console.error);
+  const login = (userData: User) => {
+    setUser(userData);
   };
 
-  const logout = () => {
-    localStorage.removeItem("accessToken");
-    localStorage.removeItem("refreshToken");
-    setUser(null);
+  const logout = async () => {
+    try {
+      await api.post("/auth/logout");
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setUser(null);
+    }
   };
 
   return (
