@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, Request, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user
@@ -46,8 +46,27 @@ from app.services.secrets import (
     list_secrets,
     update_secret,
 )
+from app.services.audit import (
+    log_secret_create,
+    log_secret_delete,
+    log_secret_read,
+    log_secret_update,
+)
 
 router = APIRouter(prefix="/secrets", tags=["secrets"])
+
+
+def _client_ip(request: Request) -> str | None:
+    forwarded = request.headers.get("X-Forwarded-For")
+    if forwarded:
+        return forwarded.split(",")[0].strip()
+    if request.client:
+        return request.client.host
+    return None
+
+
+def _user_agent(request: Request) -> str | None:
+    return request.headers.get("User-Agent")
 
 
 # ---------------------------------------------------------------------------
@@ -103,6 +122,7 @@ def list_categories_endpoint(
 )
 def create_secret_endpoint(
     payload: SecretCreate,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
     settings: Settings = Depends(settings_provider),
@@ -112,6 +132,7 @@ def create_secret_endpoint(
     except SecretError as exc:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=str(exc)) from exc
     meta = get_secret_metadata(db, secret.id, current_user)
+    log_secret_create(db, current_user.id, secret.id, secret.name, ip=_client_ip(request), ua=_user_agent(request))
     return SecretSummary(**meta)
 
 
@@ -169,6 +190,7 @@ def get_secret_endpoint(
 )
 def get_secret_value_endpoint(
     secret_id: UUID,
+    request: Request,
     db: Session = Depends(get_db),
     current_user: User = Depends(get_current_user),
     settings: Settings = Depends(settings_provider),
@@ -181,6 +203,8 @@ def get_secret_value_endpoint(
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc)) from exc
     except SecretError as exc:
         raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=str(exc)) from exc
+    # Audit every plaintext retrieval — this is the most sensitive action in the vault
+    log_secret_read(db, current_user.id, secret_id, data["name"], ip=_client_ip(request), ua=_user_agent(request))
     return SecretValueResponse(**data)
 
 
