@@ -21,6 +21,7 @@ from app.schemas.auth import (
 )
 from app.services.audit import log_auth_login, log_auth_login_failed, log_auth_logout, log_auth_register
 from app.services.auth import AuthError, authenticate_user, issue_token_pair, logout, refresh_tokens, register_user
+from app.security.limiter import limiter
 
 router = APIRouter(prefix="/auth", tags=["authentication"])
 
@@ -39,6 +40,7 @@ def _user_agent(request: Request) -> str | None:
 
 
 @router.post("/register", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
+@limiter.limit("5/minute")
 def register(payload: RegisterRequest, request: Request, db: Session = Depends(get_db)) -> User:
     try:
         user = register_user(db, payload)
@@ -49,6 +51,7 @@ def register(payload: RegisterRequest, request: Request, db: Session = Depends(g
 
 
 @router.post("/login", response_model=TokenPairResponse)
+@limiter.limit("10/minute")
 def login(
     payload: LoginRequest,
     request: Request,

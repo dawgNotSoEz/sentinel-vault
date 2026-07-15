@@ -23,6 +23,7 @@ class Settings(BaseSettings):
     app_name: str = Field(default="Sentinel Vault", validation_alias="APP_NAME")
     app_env: Environment = Field(default="development", validation_alias="APP_ENV")
     api_v1_prefix: str = Field(default="/api/v1", validation_alias="API_V1_PREFIX")
+    frontend_url: str = Field(default="http://localhost:3000", validation_alias="FRONTEND_URL")
     database_url: str = Field(
         default="postgresql+psycopg://sentinel:sentinel@localhost:5432/sentinel_vault",
         validation_alias="DATABASE_URL",
