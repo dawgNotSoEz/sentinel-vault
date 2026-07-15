@@ -1,0 +1,22 @@
+[project]
+name = "sentinel-vault-backend"
+version = "0.1.0"
+description = "FastAPI backend for Sentinel Vault"
+requires-python = ">=3.13"
+dependencies = [
+  "fastapi",
+  "uvicorn[standard]",
+  "sqlalchemy",
+  "alembic",
+  "psycopg[binary]",
+  "pydantic-settings",
+  "argon2-cffi",
+  "pyjwt",
+  "cryptography",
+]
+
+[project.optional-dependencies]
+dev = ["pytest", "httpx", "ruff"]
+
+[tool.ruff]
+line-length = 100
