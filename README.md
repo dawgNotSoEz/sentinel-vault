@@ -83,7 +83,7 @@ Docker Compose currently starts PostgreSQL only. Backend and frontend containers
 | 0 | Planning, architecture, schema, API, threat model | Complete |
 | 1 | Backend foundation | Complete |
 | 2 | Database engineering | Complete |
-| 3 | Authentication | Pending |
+| 3 | Authentication | Complete |
 | 4 | Cryptography | Pending |
 | 5 | Key management | Pending |
 | 6 | Secret engine | Pending |
@@ -108,3 +108,4 @@ Sentinel Vault is built to discuss secure architecture decisions:
 ## Security Warning
 
 This project is educational and portfolio-oriented. Do not use it to protect real production secrets until it has been independently reviewed, tested, hardened, and deployed with a real key-management strategy.
+ tested, hardened, and deployed with a real key-management strategy.

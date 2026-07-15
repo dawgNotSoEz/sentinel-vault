@@ -28,6 +28,9 @@ class Settings(BaseSettings):
         validation_alias="DATABASE_URL",
     )
     jwt_secret_key: str = Field(default="change-me-in-development", validation_alias="JWT_SECRET_KEY")
+    jwt_algorithm: str = Field(default="HS256", validation_alias="JWT_ALGORITHM")
+    access_token_ttl_minutes: int = Field(default=15, validation_alias="ACCESS_TOKEN_TTL_MINUTES")
+    refresh_token_ttl_days: int = Field(default=30, validation_alias="REFRESH_TOKEN_TTL_DAYS")
     master_key_id: str = Field(default="local-dev-master-key", validation_alias="MASTER_KEY_ID")
     log_level: str = Field(default="INFO", validation_alias="LOG_LEVEL")
 
