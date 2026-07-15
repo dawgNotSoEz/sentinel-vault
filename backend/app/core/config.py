@@ -32,7 +32,25 @@ class Settings(BaseSettings):
     access_token_ttl_minutes: int = Field(default=15, validation_alias="ACCESS_TOKEN_TTL_MINUTES")
     refresh_token_ttl_days: int = Field(default=30, validation_alias="REFRESH_TOKEN_TTL_DAYS")
     master_key_id: str = Field(default="local-dev-master-key", validation_alias="MASTER_KEY_ID")
+    # 32-byte master key encoded as 64 hex characters.
+    # NEVER commit a real value here. Generate one with:
+    #   python -c "import secrets; print(secrets.token_hex(32))"
+    master_key_hex: str = Field(
+        default="0" * 64,
+        validation_alias="MASTER_KEY_HEX",
+    )
     log_level: str = Field(default="INFO", validation_alias="LOG_LEVEL")
+
+    @property
+    def master_key_bytes(self) -> bytes:
+        """Return the 32-byte master key decoded from hex."""
+        try:
+            raw = bytes.fromhex(self.master_key_hex)
+        except ValueError as exc:
+            raise ValueError("MASTER_KEY_HEX must be a valid 64-character hex string") from exc
+        if len(raw) != 32:
+            raise ValueError("MASTER_KEY_HEX must decode to exactly 32 bytes (64 hex chars)")
+        return raw
 
     @property
     def is_production(self) -> bool:
