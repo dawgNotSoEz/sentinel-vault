@@ -64,19 +64,19 @@ flowchart LR
 
 ## Local Development Status
 
-Current milestone: Phase 0 planning and scaffold.
+Current milestone: **Backend 100% Complete (Phase 12)**
 
 ```bash
 cd C:\Dev\Active\CyberSecurity\sentinel-vault
 ```
 
-Backend health endpoint exists at:
+To run the backend with Docker Compose:
 
-```text
-GET /health
+```bash
+docker-compose up --build -d
 ```
 
-Docker Compose currently starts PostgreSQL only. Backend and frontend containers will be added in later phases.
+The FastAPI backend will be available at `http://localhost:8000` and the interactive OpenAPI docs at `http://localhost:8000/docs`.
 
 ## Project Roadmap
 
@@ -87,14 +87,14 @@ Docker Compose currently starts PostgreSQL only. Backend and frontend containers
 | 2 | Database engineering | Complete |
 | 3 | Authentication | Complete |
 | 4 | Cryptography | Complete |
-| 5 | Key management | Pending |
-| 6 | Secret engine | Pending |
-| 7 | Audit and monitoring | Pending |
-| 8 | RBAC | Pending |
-| 9 | Frontend dashboard | Pending |
-| 10 | Docker and deployment | Pending |
-| 11 | Testing | Pending |
-| 12 | Documentation polish | Pending |
+| 5 | Key management | Complete |
+| 6 | Secret engine | Complete |
+| 7 | Audit and monitoring | Complete |
+| 8 | RBAC | Complete |
+| 9 | Rate Limiting & Security Hardening | Complete |
+| 10 | Docker and deployment | Complete |
+| 11 | CI/CD & GitHub Actions | Complete |
+| 12 | README Polish & Final Handover | Complete |
 
 ## Interview Story
 
