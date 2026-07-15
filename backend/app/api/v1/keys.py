@@ -31,18 +31,9 @@ from app.services.key_management import (
     get_active_kek,
     rotate_kek,
 )
+from app.services.rbac import PERM_KEYS_BOOTSTRAP, PERM_KEYS_READ, PERM_KEYS_ROTATE, require_permission
 
 router = APIRouter(prefix="/keys", tags=["key-management"])
-
-
-def _require_admin(current_user: User = Depends(get_current_user)) -> User:
-    """Guard: only users with an 'admin' role may access key management."""
-    if current_user.role is None or current_user.role.name != "admin":
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Key management endpoints require admin role.",
-        )
-    return current_user
 
 
 # ---------------------------------------------------------------------------
@@ -61,7 +52,7 @@ def _require_admin(current_user: User = Depends(get_current_user)) -> User:
 )
 def list_keks(
     db: Session = Depends(get_db),
-    _: User = Depends(_require_admin),
+    _: User = Depends(require_permission(PERM_KEYS_READ)),
 ) -> KEKListResponse:
     rows = list(db.scalars(select(KeyEncryptionKey).order_by(KeyEncryptionKey.version.asc())))
     return KEKListResponse(
@@ -77,7 +68,7 @@ def list_keks(
 )
 def get_active_kek_info(
     db: Session = Depends(get_db),
-    _: User = Depends(_require_admin),
+    _: User = Depends(require_permission(PERM_KEYS_READ)),
 ) -> KEKResponse:
     kek = get_active_kek(db)
     if kek is None:
@@ -101,7 +92,7 @@ def get_active_kek_info(
 def bootstrap_kek_endpoint(
     db: Session = Depends(get_db),
     settings: Settings = Depends(settings_provider),
-    _: User = Depends(_require_admin),
+    _: User = Depends(require_permission(PERM_KEYS_BOOTSTRAP)),
 ) -> KEKResponse:
     try:
         kek = bootstrap_kek(db, settings)
@@ -122,7 +113,7 @@ def bootstrap_kek_endpoint(
 def rotate_kek_endpoint(
     db: Session = Depends(get_db),
     settings: Settings = Depends(settings_provider),
-    _: User = Depends(_require_admin),
+    _: User = Depends(require_permission(PERM_KEYS_ROTATE)),
 ) -> RotateKEKResponse:
     # Count DEKs before rotation so we can report how many were re-encrypted
     old_kek = get_active_kek(db)
@@ -159,7 +150,7 @@ def rotate_kek_endpoint(
 )
 def list_deks(
     db: Session = Depends(get_db),
-    _: User = Depends(_require_admin),
+    _: User = Depends(require_permission(PERM_KEYS_READ)),
 ) -> DEKListResponse:
     rows = list(
         db.scalars(select(DataEncryptionKey).order_by(DataEncryptionKey.created_at.desc()))
@@ -178,7 +169,7 @@ def list_deks(
 def get_dek(
     dek_id: str,
     db: Session = Depends(get_db),
-    _: User = Depends(_require_admin),
+    _: User = Depends(require_permission(PERM_KEYS_READ)),
 ) -> DEKResponse:
     dek = db.get(DataEncryptionKey, dek_id)
     if dek is None:
