@@ -79,7 +79,7 @@ Docker Compose currently starts PostgreSQL only. Backend and frontend containers
 | Phase | Focus | Status |
 | --- | --- | --- |
 | 0 | Planning, architecture, schema, API, threat model | Complete |
-| 1 | Backend foundation | Pending |
+| 1 | Backend foundation | Complete |
 | 2 | Database engineering | Pending |
 | 3 | Authentication | Pending |
 | 4 | Cryptography | Pending |
