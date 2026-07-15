@@ -1,9 +1,16 @@
-import { Users, UserPlus, Filter, ShieldCheck, MoreVertical, Search } from "lucide-react";
+import { Users, UserPlus, Filter, ShieldCheck, MoreVertical, Search, Lock, ShieldAlert } from "lucide-react";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { Input } from "../../components/ui/Input";
+import { useUsers } from "../../hooks/useUsers";
 
 export function UserManagementPage() {
+  const { data: usersData, isLoading } = useUsers();
+  const users = usersData?.items;
+  
+  const totalUsers = users?.length || 0;
+  const activeAdmins = users?.filter(u => u.is_superuser).length || 0;
+  const lockedAccounts = users?.filter(u => u.locked_until != null).length || 0;
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
       <div className="flex justify-between items-center">
@@ -29,15 +36,17 @@ export function UserManagementPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
         <Card className="bg-slate-900/50 backdrop-blur border-slate-800 p-6">
           <h3 className="text-slate-400 text-sm font-medium mb-2">Total Users</h3>
-          <p className="text-3xl font-bold text-cyan-400">1</p>
+          <p className="text-3xl font-bold text-cyan-400">{isLoading ? "-" : totalUsers}</p>
         </Card>
         <Card className="bg-slate-900/50 backdrop-blur border-slate-800 p-6">
           <h3 className="text-slate-400 text-sm font-medium mb-2">Active Administrators</h3>
-          <p className="text-3xl font-bold text-indigo-400">1</p>
+          <p className="text-3xl font-bold text-indigo-400">{isLoading ? "-" : activeAdmins}</p>
         </Card>
         <Card className="bg-slate-900/50 backdrop-blur border-slate-800 p-6">
           <h3 className="text-slate-400 text-sm font-medium mb-2">Locked Accounts</h3>
-          <p className="text-3xl font-bold text-emerald-400">0</p>
+          <p className={`text-3xl font-bold ${lockedAccounts > 0 ? "text-rose-400" : "text-emerald-400"}`}>
+            {isLoading ? "-" : lockedAccounts}
+          </p>
         </Card>
       </div>
 
@@ -55,53 +64,73 @@ export function UserManagementPage() {
           </div>
         </div>
         
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-slate-800/50 text-slate-400 uppercase text-xs font-semibold">
-              <tr>
-                <th className="px-6 py-4">User</th>
-                <th className="px-6 py-4">Role</th>
-                <th className="px-6 py-4">Status</th>
-                <th className="px-6 py-4">Last Login</th>
-                <th className="px-6 py-4">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-800/50">
-              <tr className="hover:bg-slate-800/20 transition-colors">
-                <td className="px-6 py-4">
-                  <div className="flex items-center">
-                    <div className="h-8 w-8 rounded-full bg-cyan-900/50 flex items-center justify-center text-cyan-400 font-bold mr-3 border border-cyan-800">
-                      A
-                    </div>
-                    <div>
-                      <div className="font-medium text-slate-200">Admin User</div>
-                      <div className="text-xs text-slate-500">admin@sentinel.internal</div>
-                    </div>
-                  </div>
-                </td>
-                <td className="px-6 py-4">
-                  <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                    Administrator
-                  </span>
-                </td>
-                <td className="px-6 py-4">
-                  <div className="flex items-center text-emerald-400 text-xs">
-                    <ShieldCheck className="w-3.5 h-3.5 mr-1" />
-                    Active
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-slate-400">
-                  Just now
-                </td>
-                <td className="px-6 py-4">
-                  <Button variant="secondary" className="h-8 w-8 p-0 rounded-full border-slate-700 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/50">
-                    <MoreVertical className="w-4 h-4 mx-auto" />
-                  </Button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        {isLoading ? (
+          <div className="p-12 text-center text-cyan-500 animate-pulse">Loading users...</div>
+        ) : users && users.length > 0 ? (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-slate-300">
+              <thead className="bg-slate-800/50 text-slate-400 uppercase text-xs font-semibold">
+                <tr>
+                  <th className="px-6 py-4">User</th>
+                  <th className="px-6 py-4">Role</th>
+                  <th className="px-6 py-4">Status</th>
+                  <th className="px-6 py-4">Created</th>
+                  <th className="px-6 py-4">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/50">
+                {users.map((user) => (
+                  <tr key={user.id} className="hover:bg-slate-800/20 transition-colors">
+                    <td className="px-6 py-4">
+                      <div className="flex items-center">
+                        <div className="h-8 w-8 rounded-full bg-cyan-900/50 flex items-center justify-center text-cyan-400 font-bold mr-3 border border-cyan-800">
+                          {user.full_name.charAt(0).toUpperCase()}
+                        </div>
+                        <div>
+                          <div className="font-medium text-slate-200">{user.full_name}</div>
+                          <div className="text-xs text-slate-500">{user.email}</div>
+                        </div>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4">
+                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border ${user.is_superuser ? 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20' : 'bg-slate-500/10 text-slate-400 border-slate-500/20'}`}>
+                        {user.is_superuser ? "Administrator" : "User"}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4">
+                      {user.locked_until ? (
+                        <div className="flex items-center text-rose-400 text-xs">
+                          <Lock className="w-3.5 h-3.5 mr-1" />
+                          Locked
+                        </div>
+                      ) : !user.is_active ? (
+                        <div className="flex items-center text-amber-400 text-xs">
+                          <ShieldAlert className="w-3.5 h-3.5 mr-1" />
+                          Inactive
+                        </div>
+                      ) : (
+                        <div className="flex items-center text-emerald-400 text-xs">
+                          <ShieldCheck className="w-3.5 h-3.5 mr-1" />
+                          Active
+                        </div>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 text-slate-400">
+                      {new Date(user.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4">
+                      <Button variant="secondary" className="h-8 w-8 p-0 rounded-full border-slate-700 text-slate-400 hover:text-cyan-400 hover:border-cyan-500/50">
+                        <MoreVertical className="w-4 h-4 mx-auto" />
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        ) : (
+           <div className="p-12 text-center text-slate-500">No users found.</div>
+        )}
       </Card>
     </div>
   );
