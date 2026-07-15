@@ -10,6 +10,7 @@ import { AppLayout } from "./components/layout/AppLayout";
 import { DashboardPage } from "./pages/dashboard/DashboardPage";
 import { KeyManagementPage } from "./pages/keys/KeyManagementPage";
 import { AuditLogsPage } from "./pages/audit/AuditLogsPage";
+import { SettingsPage } from "./pages/settings/SettingsPage";
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, isLoading } = useAuth();
@@ -32,7 +33,7 @@ function App() {
               <Route index element={<DashboardPage />} />
               <Route path="keys" element={<KeyManagementPage />} />
               <Route path="audit" element={<AuditLogsPage />} />
-              {/* Other routes will go here: /settings */}
+              <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Routes>
         </BrowserRouter>
