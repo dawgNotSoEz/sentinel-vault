@@ -1,10 +1,14 @@
+import { useState } from "react";
 import { Plus, Filter, ShieldCheck, Key, Clock, MoreVertical } from "lucide-react";
 import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { useSecrets } from "../../hooks/useSecrets";
+import { CreateSecretModal } from "../../components/secrets/CreateSecretModal";
 
 export function DashboardPage() {
-  const { data: secrets, isLoading } = useSecrets();
+  const { data: secretsData, isLoading } = useSecrets();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const secrets = secretsData?.items;
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
@@ -21,7 +25,10 @@ export function DashboardPage() {
             <Filter className="w-4 h-4 mr-2" />
             Filter
           </Button>
-          <Button className="bg-cyan-600 hover:bg-cyan-500 text-white border-none shadow-lg shadow-cyan-500/20">
+          <Button 
+            className="bg-cyan-600 hover:bg-cyan-500 text-white border-none shadow-lg shadow-cyan-500/20"
+            onClick={() => setIsModalOpen(true)}
+          >
             <Plus className="w-4 h-4 mr-2" />
             New Secret
           </Button>
@@ -98,12 +105,21 @@ export function DashboardPage() {
             <p className="text-slate-500 max-w-sm mx-auto mb-6">
               There are no encrypted secrets stored in the registry yet. Create your first secret to secure your infrastructure.
             </p>
-            <Button variant="secondary" className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10">
+            <Button 
+              variant="secondary" 
+              className="border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10"
+              onClick={() => setIsModalOpen(true)}
+            >
               Create First Secret
             </Button>
           </div>
         )}
       </Card>
+
+      <CreateSecretModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+      />
     </div>
   );
 }
