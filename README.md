@@ -57,6 +57,8 @@ flowchart LR
 - [Database Schema](docs/architecture/database-schema.md)
 - [Backend Foundation](docs/architecture/backend-foundation.md)
 - [Database Engineering](docs/architecture/database-engineering.md)
+- [Authentication System](docs/architecture/authentication-system.md)
+- [Cryptography](docs/architecture/cryptography.md)
 - [API List](docs/api/api-list.md)
 - [Threat Model](docs/threat-model/README.md)
 
@@ -84,7 +86,7 @@ Docker Compose currently starts PostgreSQL only. Backend and frontend containers
 | 1 | Backend foundation | Complete |
 | 2 | Database engineering | Complete |
 | 3 | Authentication | Complete |
-| 4 | Cryptography | Pending |
+| 4 | Cryptography | Complete |
 | 5 | Key management | Pending |
 | 6 | Secret engine | Pending |
 | 7 | Audit and monitoring | Pending |
