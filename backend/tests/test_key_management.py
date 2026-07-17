@@ -17,9 +17,10 @@ Coverage:
 from __future__ import annotations
 
 import uuid
+from datetime import UTC, datetime
 
 import pytest
-from sqlalchemy import JSON, String, Text, create_engine, event, types
+from sqlalchemy import DateTime, ForeignKey, Integer, LargeBinary, String, create_engine, event, types
 from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -29,12 +30,6 @@ from app.services.key_management import (
     KeyManagementError,
     _decrypt_key_material,
     _encrypt_key_material,
-    bootstrap_kek,
-    decrypt_dek,
-    decrypt_kek,
-    generate_dek,
-    get_active_kek,
-    rotate_kek,
 )
 
 
@@ -65,10 +60,6 @@ class UUIDType(types.TypeDecorator):
 
 class _Base(DeclarativeBase):
     pass
-
-
-from datetime import UTC, datetime
-from sqlalchemy import DateTime, Enum, ForeignKey, Integer, LargeBinary
 
 
 class _KEKRow(_Base):
@@ -148,11 +139,6 @@ def db() -> Session:
 # We call the _internal_ helpers directly and build model instances manually.
 # ---------------------------------------------------------------------------
 
-from app.services.key_management import (
-    _decrypt_key_material,
-    _encrypt_key_material,
-)
-from app.models.key import KeyStatus
 
 
 def _make_kek(db: Session, settings: Settings, version: int = 1) -> _KEKRow:

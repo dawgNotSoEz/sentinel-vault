@@ -23,7 +23,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_current_user
 from app.db.session import get_db
 from app.models.user import User
-from app.schemas.rbac import DeactivateResponse, PermissionResponse, RoleResponse, UserAdminView, UserRoleAssign
+from app.schemas.rbac import DeactivateResponse, RoleResponse, UserAdminView, UserRoleAssign
 from app.services.rbac import (
     PERM_ROLES_READ,
     PERM_USERS_ASSIGN_ROLE,
@@ -33,7 +33,6 @@ from app.services.rbac import (
     deactivate_user,
     get_role_by_name,
     get_user_permissions,
-    is_admin,
     list_roles,
     list_users,
     require_admin,

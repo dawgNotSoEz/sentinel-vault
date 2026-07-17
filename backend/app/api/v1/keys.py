@@ -13,7 +13,7 @@ from sqlalchemy import func, select
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from app.api.deps import get_current_user, settings_provider
+from app.api.deps import settings_provider
 from app.core.config import Settings
 from app.db.session import get_db
 from app.models.key import DataEncryptionKey, KeyEncryptionKey

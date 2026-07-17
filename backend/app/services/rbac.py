@@ -27,7 +27,6 @@ from fastapi import Depends, HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.orm import Session
 
-from app.db.session import get_db
 from app.models.role import Permission, Role
 from app.models.user import User
 

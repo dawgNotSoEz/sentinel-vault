@@ -18,28 +18,22 @@ from __future__ import annotations
 
 import uuid
 from datetime import UTC, datetime
-from unittest.mock import MagicMock
+from types import SimpleNamespace
 
-import pytest
 
 from app.services.rbac import (
     ALL_PERMISSIONS,
     PERM_AUDIT_READ_ALL,
     PERM_AUDIT_READ_OWN,
-    PERM_CATEGORIES_CREATE,
-    PERM_CATEGORIES_READ,
     PERM_KEYS_BOOTSTRAP,
     PERM_KEYS_READ,
     PERM_KEYS_ROTATE,
-    PERM_ROLES_ASSIGN_PERMISSION,
-    PERM_ROLES_READ,
     PERM_SECRETS_CREATE,
     PERM_SECRETS_DELETE,
     PERM_SECRETS_READ,
     PERM_SECRETS_UPDATE,
     PERM_USERS_ASSIGN_ROLE,
     PERM_USERS_DEACTIVATE,
-    PERM_USERS_READ,
     ROLE_DESCRIPTIONS,
     ROLE_PERMISSIONS,
     get_user_permissions,
@@ -124,11 +118,6 @@ def test_role_descriptions_cover_all_roles() -> None:
 # ---------------------------------------------------------------------------
 # has_permission / get_user_permissions helpers
 # ---------------------------------------------------------------------------
-
-
-from types import SimpleNamespace
-
-
 def _make_permission(name: str) -> SimpleNamespace:
     return SimpleNamespace(name=name)
 

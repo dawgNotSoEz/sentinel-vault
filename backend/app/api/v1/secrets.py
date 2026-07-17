@@ -48,9 +48,7 @@ from app.services.secrets import (
 )
 from app.services.audit import (
     log_secret_create,
-    log_secret_delete,
     log_secret_read,
-    log_secret_update,
 )
 
 router = APIRouter(prefix="/secrets", tags=["secrets"])

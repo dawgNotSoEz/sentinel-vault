@@ -23,8 +23,8 @@ import uuid
 from datetime import UTC, datetime
 
 import pytest
-from sqlalchemy import DateTime, ForeignKey, Integer, LargeBinary, String, Text, create_engine, event
-from sqlalchemy.orm import DeclarativeBase, Mapped, Session, mapped_column, relationship, sessionmaker
+from sqlalchemy import String, create_engine
+from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 from sqlalchemy import types
 
@@ -69,10 +69,6 @@ def test_settings() -> Settings:
 @pytest.fixture(scope="module")
 def module_db(test_settings: Settings) -> Session:
     """Module-scoped SQLite session used for OpenAPI contract test."""
-    from app.db.base import Base as ProdBase
-    from sqlalchemy import JSON
-    from sqlalchemy.dialects.postgresql import JSONB
-    from sqlalchemy.dialects.postgresql import UUID as PostgresUUID
 
     engine = create_engine("sqlite:///:memory:", connect_args={"check_same_thread": False}, poolclass=StaticPool)
     session = sessionmaker(bind=engine)()

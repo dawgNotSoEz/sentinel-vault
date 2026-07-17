@@ -28,7 +28,6 @@ from sqlalchemy import select
 from sqlalchemy.orm import Session
 
 from app.models.audit_log import AuditLog, AuditOutcome
-from app.models.user import User
 
 logger = logging.getLogger(__name__)
 

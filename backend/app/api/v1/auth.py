@@ -14,7 +14,6 @@ from app.models.user import User
 from app.schemas.auth import (
     LoginRequest,
     RegisterRequest,
-    TokenPairResponse,
     UserResponse,
 )
 from app.services.audit import log_auth_login, log_auth_login_failed, log_auth_logout, log_auth_register

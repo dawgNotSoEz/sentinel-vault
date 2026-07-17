@@ -1,6 +1,5 @@
 """Tests for Phase 9: Security headers and CORS."""
 
-import pytest
 from fastapi.testclient import TestClient
 from app.core.config import Settings
 from app.main import create_app
