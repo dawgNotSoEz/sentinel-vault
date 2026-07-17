@@ -62,21 +62,65 @@ flowchart LR
 - [API List](docs/api/api-list.md)
 - [Threat Model](docs/threat-model/README.md)
 
-## Local Development Status
+## Getting Started
 
-Current milestone: **Backend 100% Complete (Phase 12)**
+### Prerequisites
+- **Python 3.13+**
+- **Docker & Docker Compose** (for running the database and full stack)
+- **Git**
 
-```bash
-cd C:\Dev\Active\CyberSecurity\sentinel-vault
-```
-
-To run the backend with Docker Compose:
+### Running with Docker Compose (Easiest)
+You can spin up the entire backend and PostgreSQL database using Docker Compose:
 
 ```bash
 docker-compose up --build -d
 ```
-
 The FastAPI backend will be available at `http://localhost:8000` and the interactive OpenAPI docs at `http://localhost:8000/docs`.
+
+### Local Development Setup
+To run the backend locally for development or to run tests:
+
+1. **Navigate to the backend directory:**
+   ```bash
+   cd backend
+   ```
+
+2. **Create and activate a virtual environment:**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+
+3. **Install the package and development dependencies:**
+   ```bash
+   pip install -e .[dev]
+   ```
+
+4. **Start the local PostgreSQL database:**
+   ```bash
+   # (Run this from the project root)
+   docker-compose up -d db
+   ```
+
+5. **Run database migrations:**
+   ```bash
+   alembic upgrade head
+   ```
+
+6. **Run the local development server:**
+   ```bash
+   uvicorn app.main:app --reload
+   ```
+
+### Running Tests and Linters
+To ensure everything is working correctly, you can run the test suite and linter:
+```bash
+# Run tests (runs against an in-memory SQLite database)
+pytest tests/ -v
+
+# Run linting
+ruff check .
+```
 
 ## Project Roadmap
 
@@ -110,4 +154,3 @@ Sentinel Vault is built to discuss secure architecture decisions:
 ## Security Warning
 
 This project is educational and portfolio-oriented. Do not use it to protect real production secrets until it has been independently reviewed, tested, hardened, and deployed with a real key-management strategy.
- tested, hardened, and deployed with a real key-management strategy.
